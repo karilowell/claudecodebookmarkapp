@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Bookmarks</title>
+<style>
+  :root {
+    --blue-50: #eff6ff;
+    --blue-100: #dbeafe;
+    --blue-200: #bfdbfe;
+    --blue-500: #3b82f6;
+    --blue-600: #2563eb;
+    --blue-700: #1d4ed8;
+    --blue-900: #1e3a8a;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-900: #0f172a;
+    --radius: 14px;
+    --shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06);
+    --shadow-hover: 0 10px 20px rgba(37, 99, 235, 0.12), 0 4px 8px rgba(15, 23, 42, 0.06);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(180deg, var(--blue-50) 0%, var(--gray-50) 260px, var(--gray-50) 100%);
+    color: var(--gray-900);
+    min-height: 100vh;
+  }
+
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  header.top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+
+  .brand h1 {
+    margin: 0 0 4px;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--blue-900);
+  }
+
+  .brand p {
+    margin: 0;
+    color: var(--gray-500);
+    font-size: 14px;
+  }
+
+  .brand h1 .dot { color: var(--blue-500); }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: var(--blue-600);
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    transition: background 0.15s ease, transform 0.1s ease;
+    white-space: nowrap;
+  }
+  .btn-primary:hover { background: var(--blue-700); }
+  .btn-primary:active { transform: translateY(1px); }
+
+  .btn-secondary {
+    background: #fff;
+    color: var(--gray-600);
+    border: 1px solid var(--gray-200);
+    padding: 11px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .btn-secondary:hover { background: var(--gray-100); }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+
+  .search-box {
+    position: relative;
+    max-width: 420px;
+  }
+  .search-box svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-400);
+    pointer-events: none;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 12px 14px 12px 40px;
+    border-radius: 10px;
+    border: 1px solid var(--gray-200);
+    background: #fff;
+    font-size: 14px;
+    color: var(--gray-900);
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .search-box input:focus {
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 3px var(--blue-100);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    border: 1px solid var(--gray-200);
+    background: #fff;
+    color: var(--gray-600);
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+  .chip:hover { border-color: var(--blue-300, var(--blue-200)); color: var(--blue-700); }
+  .chip.active {
+    background: var(--blue-600);
+    border-color: var(--blue-600);
+    color: #fff;
+  }
+  .chip .count {
+    opacity: 0.75;
+    margin-left: 4px;
+    font-weight: 500;
+  }
+
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+    margin-top: 22px;
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: box-shadow 0.18s ease, transform 0.18s ease;
+    position: relative;
+  }
+  .card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gray-900);
+    text-decoration: none;
+    line-height: 1.35;
+    word-break: break-word;
+  }
+  .card-title:hover { color: var(--blue-600); }
+
+  .card-url {
+    font-size: 12.5px;
+    color: var(--blue-600);
+    text-decoration: none;
+    word-break: break-all;
+    opacity: 0.85;
+  }
+  .card-url:hover { text-decoration: underline; }
+
+  .badge {
+    display: inline-block;
+    background: var(--blue-100);
+    color: var(--blue-700);
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+
+  .card-notes {
+    font-size: 13.5px;
+    color: var(--gray-600);
+    line-height: 1.5;
+    margin: 0;
+    flex-grow: 1;
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
+  }
+
+  .delete-btn {
+    background: transparent;
+    border: 1px solid var(--gray-200);
+    color: var(--gray-400);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    transition: all 0.15s ease;
+  }
+  .delete-btn:hover {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #dc2626;
+  }
+
+  /* Empty state */
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gray-500);
+  }
+  .empty .icon { font-size: 40px; margin-bottom: 10px; }
+  .empty h3 { margin: 0 0 6px; color: var(--gray-700); }
+  .empty p { margin: 0; font-size: 14px; }
+
+  /* Modal / form */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 50;
+  }
+  .overlay.hidden { display: none; }
+
+  .modal {
+    background: #fff;
+    border-radius: 16px;
+    padding: 26px;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal h2 {
+    margin: 0 0 18px;
+    font-size: 19px;
+    color: var(--blue-900);
+  }
+
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 6px;
+  }
+  .field input,
+  .field textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--gray-200);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    color: var(--gray-900);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .field input:focus,
+  .field textarea:focus {
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 3px var(--blue-100);
+  }
+  .field textarea { resize: vertical; min-height: 70px; }
+  .field .error {
+    color: #dc2626;
+    font-size: 12px;
+    margin-top: 4px;
+    display: none;
+  }
+  .field.invalid input { border-color: #dc2626; }
+  .field.invalid .error { display: block; }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  datalist {}
+
+  @media (max-width: 560px) {
+    .wrap { padding: 20px 14px 60px; }
+    header.top { flex-direction: column; }
+    .btn-primary { width: 100%; text-align: center; }
+    .brand h1 { font-size: 24px; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="brand">
+        <h1>My Bookmarks<span class="dot">.</span></h1>
+        <p>Your personal, private link dashboard — saved right in this browser.</p>
+      </div>
+      <button class="btn-primary" id="openAddBtn">+ Add Bookmark</button>
+    </header>
+
+    <div class="controls">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="searchInput" placeholder="Search by title or category...">
+      </div>
+      <div class="chips" id="categoryChips"></div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="emptyState" style="display:none;">
+      <div class="icon">🔖</div>
+      <h3>No bookmarks found</h3>
+      <p>Try a different search or category, or add a new bookmark.</p>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="overlay">
+    <div class="modal">
+      <h2>Add a Bookmark</h2>
+      <form id="bookmarkForm" novalidate>
+        <div class="field" id="titleField">
+          <label for="titleInput">Title</label>
+          <input type="text" id="titleInput" placeholder="e.g. MDN Web Docs">
+          <div class="error">Please enter a title.</div>
+        </div>
+        <div class="field" id="urlField">
+          <label for="urlInput">URL</label>
+          <input type="text" id="urlInput" placeholder="e.g. https://developer.mozilla.org">
+          <div class="error">Please enter a valid URL.</div>
+        </div>
+        <div class="field">
+          <label for="categoryInput">Category</label>
+          <input type="text" id="categoryInput" list="categoryOptions" placeholder="e.g. Dev, Design, News...">
+          <datalist id="categoryOptions"></datalist>
+        </div>
+        <div class="field">
+          <label for="notesInput">Notes (optional)</label>
+          <textarea id="notesInput" placeholder="Why you saved this..."></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn-primary">Save Bookmark</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script>
+(function () {
+  const STORAGE_KEY = 'bookmarkDashboard.bookmarks';
+  const ALL = 'All';
+
+  const seedData = () => [
+    {
+      id: cryptoId(),
+      title: 'MDN Web Docs',
+      url: 'https://developer.mozilla.org',
+      category: 'Dev',
+      notes: 'Go-to reference for HTML, CSS, and JS.',
+      createdAt: Date.now() - 6e8
+    },
+    {
+      id: cryptoId(),
+      title: 'Dribbble',
+      url: 'https://dribbble.com',
+      category: 'Design',
+      notes: 'Inspiration for UI and visual design work.',
+      createdAt: Date.now() - 5e8
+    },
+    {
+      id: cryptoId(),
+      title: 'Hacker News',
+      url: 'https://news.ycombinator.com',
+      category: 'News',
+      notes: 'Tech news and discussion.',
+      createdAt: Date.now() - 4e8
+    },
+    {
+      id: cryptoId(),
+      title: 'freeCodeCamp',
+      url: 'https://www.freecodecamp.org',
+      category: 'Learning',
+      notes: 'Free coding courses and tutorials.',
+      createdAt: Date.now() - 3e8
+    },
+    {
+      id: cryptoId(),
+      title: 'CSS-Tricks',
+      url: 'https://css-tricks.com',
+      category: 'Dev',
+      notes: '',
+      createdAt: Date.now() - 2e8
+    },
+    {
+      id: cryptoId(),
+      title: 'Coolors',
+      url: 'https://coolors.co',
+      category: 'Design',
+      notes: 'Quick color palette generator.',
+      createdAt: Date.now() - 1e8
+    }
+  ];
+
+  function cryptoId() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return 'id-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+  }
+
+  function loadBookmarks() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        const seeded = seedData();
+        saveBookmarks(seeded);
+        return seeded;
+      }
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.error('Failed to load bookmarks', e);
+      return [];
+    }
+  }
+
+  function saveBookmarks(bookmarks) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarks));
+  }
+
+  let bookmarks = loadBookmarks();
+  let activeCategory = ALL;
+  let searchTerm = '';
+
+  const grid = document.getElementById('grid');
+  const emptyState = document.getElementById('emptyState');
+  const chipsEl = document.getElementById('categoryChips');
+  const searchInput = document.getElementById('searchInput');
+  const overlay = document.getElementById('overlay');
+  const openAddBtn = document.getElementById('openAddBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
+  const form = document.getElementById('bookmarkForm');
+  const titleInput = document.getElementById('titleInput');
+  const urlInput = document.getElementById('urlInput');
+  const categoryInput = document.getElementById('categoryInput');
+  const notesInput = document.getElementById('notesInput');
+  const categoryOptions = document.getElementById('categoryOptions');
+  const titleField = document.getElementById('titleField');
+  const urlField = document.getElementById('urlField');
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
+  function normalizeUrl(url) {
+    const trimmed = url.trim();
+    if (!/^https?:\/\//i.test(trimmed)) {
+      return 'https://' + trimmed;
+    }
+    return trimmed;
+  }
+
+  function isValidUrl(url) {
+    try {
+      new URL(normalizeUrl(url));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function getCategories() {
+    const set = new Set();
+    bookmarks.forEach(b => { if (b.category) set.add(b.category); });
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }
+
+  function getFiltered() {
+    const term = searchTerm.trim().toLowerCase();
+    return bookmarks
+      .filter(b => activeCategory === ALL || b.category === activeCategory)
+      .filter(b => {
+        if (!term) return true;
+        return (
+          (b.title || '').toLowerCase().includes(term) ||
+          (b.category || '').toLowerCase().includes(term)
+        );
+      })
+      .sort((a, b) => b.createdAt - a.createdAt);
+  }
+
+  function renderChips() {
+    const categories = getCategories();
+    const all = [ALL, ...categories];
+    chipsEl.innerHTML = all.map(cat => {
+      const count = cat === ALL ? bookmarks.length : bookmarks.filter(b => b.category === cat).length;
+      const activeClass = cat === activeCategory ? ' active' : '';
+      return `<button type="button" class="chip${activeClass}" data-category="${escapeHtml(cat)}">${escapeHtml(cat)} <span class="count">${count}</span></button>`;
+    }).join('');
+
+    categoryOptions.innerHTML = categories.map(c => `<option value="${escapeHtml(c)}"></option>`).join('');
+  }
+
+  function renderGrid() {
+    const filtered = getFiltered();
+    if (filtered.length === 0) {
+      grid.style.display = 'none';
+      emptyState.style.display = 'block';
+      return;
+    }
+    grid.style.display = 'grid';
+    emptyState.style.display = 'none';
+
+    grid.innerHTML = filtered.map(b => `
+      <div class="card" data-id="${escapeHtml(b.id)}">
+        <div class="card-top">
+          <div>
+            <a class="card-title" href="${escapeHtml(normalizeUrl(b.url))}" target="_blank" rel="noopener noreferrer">${escapeHtml(b.title)}</a>
+          </div>
+          <span class="badge">${escapeHtml(b.category || 'Uncategorized')}</span>
+        </div>
+        <a class="card-url" href="${escapeHtml(normalizeUrl(b.url))}" target="_blank" rel="noopener noreferrer">${escapeHtml(b.url)}</a>
+        ${b.notes ? `<p class="card-notes">${escapeHtml(b.notes)}</p>` : '<p class="card-notes"></p>'}
+        <div class="card-footer">
+          <button type="button" class="delete-btn" data-delete-id="${escapeHtml(b.id)}" title="Delete bookmark">🗑</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function render() {
+    renderChips();
+    renderGrid();
+  }
+
+  chipsEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('.chip');
+    if (!btn) return;
+    activeCategory = btn.dataset.category;
+    render();
+  });
+
+  searchInput.addEventListener('input', (e) => {
+    searchTerm = e.target.value;
+    renderGrid();
+  });
+
+  grid.addEventListener('click', (e) => {
+    const delBtn = e.target.closest('[data-delete-id]');
+    if (!delBtn) return;
+    const id = delBtn.dataset.deleteId;
+    const bookmark = bookmarks.find(b => b.id === id);
+    const label = bookmark ? bookmark.title : 'this bookmark';
+    if (confirm(`Delete "${label}"?`)) {
+      bookmarks = bookmarks.filter(b => b.id !== id);
+      saveBookmarks(bookmarks);
+      if (activeCategory !== ALL && !bookmarks.some(b => b.category === activeCategory)) {
+        activeCategory = ALL;
+      }
+      render();
+    }
+  });
+
+  function openModal() {
+    overlay.classList.remove('hidden');
+    titleField.classList.remove('invalid');
+    urlField.classList.remove('invalid');
+    form.reset();
+    titleInput.focus();
+  }
+
+  function closeModal() {
+    overlay.classList.add('hidden');
+  }
+
+  openAddBtn.addEventListener('click', openModal);
+  cancelBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !overlay.classList.contains('hidden')) closeModal();
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const title = titleInput.value.trim();
+    const url = urlInput.value.trim();
+    const category = categoryInput.value.trim() || 'Uncategorized';
+    const notes = notesInput.value.trim();
+
+    let valid = true;
+    if (!title) {
+      titleField.classList.add('invalid');
+      valid = false;
+    } else {
+      titleField.classList.remove('invalid');
+    }
+
+    if (!url || !isValidUrl(url)) {
+      urlField.classList.add('invalid');
+      valid = false;
+    } else {
+      urlField.classList.remove('invalid');
+    }
+
+    if (!valid) return;
+
+    bookmarks.push({
+      id: cryptoId(),
+      title,
+      url: normalizeUrl(url),
+      category,
+      notes,
+      createdAt: Date.now()
+    });
+    saveBookmarks(bookmarks);
+    closeModal();
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
